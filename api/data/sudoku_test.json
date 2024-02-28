@@ -204,7 +204,7 @@
             ]
         ],
         "clues": 23,
-        "difficulty": 0.0
+        "difficulty": "low"
     },
     {
         "id": 6,
@@ -411,7 +411,7 @@
             ]
         ],
         "clues": 24,
-        "difficulty": 0.0
+        "difficulty": "low"
     },
     {
         "id": 7,
@@ -618,7 +618,7 @@
             ]
         ],
         "clues": 26,
-        "difficulty": 0.0
+        "difficulty": "low"
     },
     {
         "id": 9,
@@ -825,7 +825,7 @@
             ]
         ],
         "clues": 23,
-        "difficulty": 0.0
+        "difficulty": "low"
     },
     {
         "id": 12,
@@ -1032,7 +1032,7 @@
             ]
         ],
         "clues": 24,
-        "difficulty": 0.0
+        "difficulty": "low"
     },
     {
         "id": 18,
@@ -1239,7 +1239,7 @@
             ]
         ],
         "clues": 25,
-        "difficulty": 0.0
+        "difficulty": "low"
     },
     {
         "id": 21,
@@ -1446,7 +1446,7 @@
             ]
         ],
         "clues": 23,
-        "difficulty": 0.0
+        "difficulty": "low"
     },
     {
         "id": 24,
@@ -1653,7 +1653,7 @@
             ]
         ],
         "clues": 25,
-        "difficulty": 0.0
+        "difficulty": "low"
     },
     {
         "id": 27,
@@ -1860,7 +1860,7 @@
             ]
         ],
         "clues": 25,
-        "difficulty": 0.0
+        "difficulty": "low"
     },
     {
         "id": 29,
@@ -2067,7 +2067,7 @@
             ]
         ],
         "clues": 24,
-        "difficulty": 1.0
+        "difficulty": "low"
     },
     {
         "id": 1,
@@ -2274,7 +2274,7 @@
             ]
         ],
         "clues": 27,
-        "difficulty": 2.2
+        "difficulty": "medium"
     },
     {
         "id": 3,
@@ -2481,7 +2481,7 @@
             ]
         ],
         "clues": 25,
-        "difficulty": 2.6
+        "difficulty": "medium"
     },
     {
         "id": 4,
@@ -2688,7 +2688,7 @@
             ]
         ],
         "clues": 26,
-        "difficulty": 1.4
+        "difficulty": "medium"
     },
     {
         "id": 5,
@@ -2895,7 +2895,7 @@
             ]
         ],
         "clues": 25,
-        "difficulty": 1.1
+        "difficulty": "medium"
     },
     {
         "id": 8,
@@ -3102,7 +3102,7 @@
             ]
         ],
         "clues": 25,
-        "difficulty": 3.7
+        "difficulty": "medium"
     },
     {
         "id": 10,
@@ -3309,7 +3309,7 @@
             ]
         ],
         "clues": 23,
-        "difficulty": 1.5
+        "difficulty": "medium"
     },
     {
         "id": 11,
@@ -3516,7 +3516,7 @@
             ]
         ],
         "clues": 26,
-        "difficulty": 1.5
+        "difficulty": "medium"
     },
     {
         "id": 13,
@@ -3723,7 +3723,7 @@
             ]
         ],
         "clues": 24,
-        "difficulty": 1.6
+        "difficulty": "medium"
     },
     {
         "id": 14,
@@ -3930,7 +3930,7 @@
             ]
         ],
         "clues": 24,
-        "difficulty": 1.8
+        "difficulty": "medium"
     },
     {
         "id": 15,
@@ -4137,7 +4137,7 @@
             ]
         ],
         "clues": 24,
-        "difficulty": 3.3
+        "difficulty": "medium"
     },
     {
         "id": 490,
@@ -4344,7 +4344,7 @@
             ]
         ],
         "clues": 25,
-        "difficulty": 6.5
+        "difficulty": "high"
     },
     {
         "id": 839,
@@ -4551,7 +4551,7 @@
             ]
         ],
         "clues": 22,
-        "difficulty": 5.1
+        "difficulty": "high"
     },
     {
         "id": 1124,
@@ -4758,7 +4758,7 @@
             ]
         ],
         "clues": 22,
-        "difficulty": 5.4
+        "difficulty": "high"
     },
     {
         "id": 1405,
@@ -4965,7 +4965,7 @@
             ]
         ],
         "clues": 23,
-        "difficulty": 5.7
+        "difficulty": "high"
     },
     {
         "id": 1455,
@@ -5172,7 +5172,7 @@
             ]
         ],
         "clues": 25,
-        "difficulty": 5.2
+        "difficulty": "high"
     },
     {
         "id": 1665,
@@ -5379,7 +5379,7 @@
             ]
         ],
         "clues": 24,
-        "difficulty": 5.2
+        "difficulty": "high"
     },
     {
         "id": 1967,
@@ -5586,7 +5586,7 @@
             ]
         ],
         "clues": 27,
-        "difficulty": 5.7
+        "difficulty": "high"
     },
     {
         "id": 2129,
@@ -5793,7 +5793,7 @@
             ]
         ],
         "clues": 23,
-        "difficulty": 5.4
+        "difficulty": "high"
     },
     {
         "id": 2466,
@@ -6000,7 +6000,7 @@
             ]
         ],
         "clues": 24,
-        "difficulty": 5.2
+        "difficulty": "high"
     },
     {
         "id": 2788,
@@ -6207,6 +6207,6 @@
             ]
         ],
         "clues": 23,
-        "difficulty": 5.1
+        "difficulty": "high"
     }
 ]

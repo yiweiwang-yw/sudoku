@@ -38,3 +38,4 @@ next-env.d.ts
 myenv
 /api/__pycache__
 *.csv
+__pycache__
