@@ -63,13 +63,12 @@ def get_sudoku(difficulty: str) -> list:
     return random.choice(selected_sudoku) if selected_sudoku else None
     
 
-# for sudoku in data:
-#     puzzle = sudoku['puzzle']
-#     print(validate_sudoku(puzzle))
-#     solution = sudoku['solution']
-#     print(validate_sudoku(solution))
-#     print("solving...")
-#     solved_puzzle = solve_sudoku(puzzle)
-#     print(solved_puzzle == solution)
+for sudoku in data:
+    puzzle = sudoku['puzzle']
+    print(validate_sudoku(puzzle))
+    solution = sudoku['solution']
+    print(validate_sudoku(solution))
+    print("solving...")
+    solved_puzzle = solve_sudoku(puzzle)
+    print(solved_puzzle == solution)
 
-print(get_sudoku('low'))
