@@ -1,14 +1,16 @@
 import json
 import os
 import random
-from data import Difficulty
+from .data import Difficulty
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 json_file_path = os.path.join(script_dir, 'sudoku_test.json')
 
-with open(json_file_path, 'r') as file:
-    data = json.load(file)
+def load_data():
+    with open(json_file_path, 'r') as file:
+        return json.load(file)
 
+data = load_data()
 
 def validate_sudoku(puzzle: list) -> bool:
     def is_valid(arr: list) -> bool:
@@ -62,13 +64,18 @@ def get_sudoku(difficulty: str) -> list:
     selected_sudoku = [sudoku for sudoku in data if sudoku['difficulty'] == difficulty]
     return random.choice(selected_sudoku) if selected_sudoku else None
     
+def get_random_sudoku() -> list:
+    return random.choice(data)
 
-for sudoku in data:
-    puzzle = sudoku['puzzle']
-    print(validate_sudoku(puzzle))
-    solution = sudoku['solution']
-    print(validate_sudoku(solution))
-    print("solving...")
-    solved_puzzle = solve_sudoku(puzzle)
-    print(solved_puzzle == solution)
+if __name__ == '__main__':
+    # Code for testing or direct execution
+    data = load_data()  # Ensure data is loaded for script execution
+    for sudoku in data:
+        puzzle = sudoku['puzzle']
+        print(validate_sudoku(puzzle))
+        solution = sudoku['solution']
+        print(validate_sudoku(solution))
+        print("solving...")
+        solved_puzzle = solve_sudoku(puzzle)
+        print(solved_puzzle == solution)
 

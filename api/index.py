@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from .data.sudoku_solver import get_random_sudoku
 
 app = FastAPI()
 
@@ -16,3 +17,7 @@ app.add_middleware(
 @app.get("/api/python")
 def hello_world():
     return {"message": "Hello World"}
+
+@app.get("/api/python/randomsudoku")
+def get_random_sudoku_resolver():
+    return get_random_sudoku()
