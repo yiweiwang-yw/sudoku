@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 interface SudokuData {
     id: number;
     puzzle: string[][];
@@ -21,7 +22,6 @@ export default function Home() {
             const data: SudokuData = await response.json();
             setMessage("Puzzle loaded");
             setPuzzleData(data);
-            console.log("data", data)
         } catch (error) {
             console.error("error", error);
             setMessage("Failed to load puzzle");
@@ -29,10 +29,26 @@ export default function Home() {
     }
 
     useEffect(() => {
-        fetchRandomSudoku();
+        setPuzzleData(initializeEmptyBoard());
     }, []);
 
-    // Function to render the Sudoku board cells
+    const initializeEmptyBoard = () => {
+        const emptyBoard = Array.from({ length: 9 }, () => Array(9).fill("."));
+        setMessage("Board initialized");
+        return {
+            id: 0,
+            puzzle: emptyBoard,
+            solution: emptyBoard,
+            clues: 0,
+            difficulty: "none",
+        };
+    };
+
+    const clearSudokuBoard = () => {
+        setPuzzleData(initializeEmptyBoard());
+        setMessage("Board cleared");
+    };
+
     const renderSudokuBoard = () => {
         if (!puzzleData) {
             return <div>Loading...</div>;
@@ -72,9 +88,20 @@ export default function Home() {
         <main className="flex min-h-screen flex-col items-center justify-center p-24">
             <h1 className="text-2xl font-bold mb-6">Home Page</h1>
             <p className="mb-6">{message || "Loading..."}</p>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-5" onClick={fetchRandomSudoku}>
-                Random
-            </button>
+            <div>
+                <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-5"
+                    onClick={fetchRandomSudoku}
+                >
+                    Random
+                </button>
+                <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-5"
+                    onClick={clearSudokuBoard}
+                >
+                    Clear
+                </button>
+            </div>
             <div>{renderSudokuBoard()}</div>
         </main>
     );
