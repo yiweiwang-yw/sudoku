@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+    Button,
+} from "@nextui-org/react";
 
 interface SudokuData {
     id: number;
@@ -88,19 +95,23 @@ export default function Home() {
         <main className="flex min-h-screen flex-col items-center justify-center p-24">
             <h1 className="text-2xl font-bold mb-6">Home Page</h1>
             <p className="mb-6">{message || "Loading..."}</p>
-            <div>
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-5"
-                    onClick={fetchRandomSudoku}
-                >
+            <div className="mb-6">
+                <Button color="primary" onClick={fetchRandomSudoku}>
                     Random
-                </button>
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-5"
-                    onClick={clearSudokuBoard}
-                >
+                </Button>
+                <Button color="primary" onClick={clearSudokuBoard}>
                     Clear
-                </button>
+                </Button>
+                <Dropdown>
+                    <DropdownTrigger>
+                        <Button variant="bordered" color="primary">Select Difficulty</Button>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Static Actions">
+                        <DropdownItem key="low">Simple</DropdownItem>
+                        <DropdownItem key="medium">Medium</DropdownItem>
+                        <DropdownItem key="high">Hard</DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
             </div>
             <div>{renderSudokuBoard()}</div>
         </main>
