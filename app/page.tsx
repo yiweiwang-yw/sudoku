@@ -17,6 +17,10 @@ interface SudokuData {
     difficulty: string;
 }
 
+// const apiBaseUrl = "http://127.0.0.1:8000/api";
+
+const apiBaseUrl = "https://yw-sudoku.vercel.app/api";
+
 export default function Home() {
     const [message, setMessage] = useState<string>("");
     const [puzzleData, setPuzzleData] = useState<SudokuData | null>(null);
@@ -24,7 +28,7 @@ export default function Home() {
     async function fetchRandomSudoku() {
         try {
             const response = await fetch(
-                "http://127.0.0.1:8000/api/python/get_randomsudoku"
+                `${apiBaseUrl}/python/get_randomsudoku`
             );
             const data: SudokuData = await response.json();
             setMessage("Puzzle loaded");
@@ -38,7 +42,7 @@ export default function Home() {
     async function fetchSudokuByDifficulty(difficulty: any) {
         try {
             const response = await fetch(
-                `http://127.0.0.1:8000/api/python/sudoku/difficulty/${difficulty}`
+                `${apiBaseUrl}/api/python/sudoku/difficulty/${difficulty}`
             );
             const data: SudokuData = await response.json();
             setMessage(`Puzzle loaded with difficulty: ${difficulty}`);
