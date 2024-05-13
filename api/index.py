@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .data.sudoku_solver import get_random_sudoku
+from .data.sudoku_solver import get_random_sudoku, get_sudoku
 
 app = FastAPI()
 
@@ -18,6 +18,11 @@ app.add_middleware(
 def hello_world():
     return {"message": "Hello World"}
 
-@app.get("/api/python/randomsudoku")
-def get_random_sudoku_resolver():
+# get a random sudoku
+@app.get("/api/python/get_randomsudoku")
+async def get_random_sudoku_resolver():
     return get_random_sudoku()
+# get a sudoku by difficulty
+@app.get("/api/python/sudoku/difficulty/{difficulty}")
+async def get_sudoku_by_difficulty(difficulty: str):
+    return get_sudoku(difficulty)

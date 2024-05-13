@@ -24,10 +24,24 @@ export default function Home() {
     async function fetchRandomSudoku() {
         try {
             const response = await fetch(
-                "http://127.0.0.1:8000/api/python/randomsudoku"
+                "http://127.0.0.1:8000/api/python/get_randomsudoku"
             );
             const data: SudokuData = await response.json();
             setMessage("Puzzle loaded");
+            setPuzzleData(data);
+        } catch (error) {
+            console.error("error", error);
+            setMessage("Failed to load puzzle");
+        }
+    }
+
+    async function fetchSudokuByDifficulty(difficulty: any) {
+        try {
+            const response = await fetch(
+                `http://127.0.0.1:8000/api/python/sudoku/difficulty/${difficulty}`
+            );
+            const data: SudokuData = await response.json();
+            setMessage(`Puzzle loaded with difficulty: ${difficulty}`);
             setPuzzleData(data);
         } catch (error) {
             console.error("error", error);
@@ -104,9 +118,11 @@ export default function Home() {
                 </Button>
                 <Dropdown>
                     <DropdownTrigger>
-                        <Button variant="bordered" color="primary">Select Difficulty</Button>
+                        <Button variant="bordered" color="primary">
+                            Select Difficulty
+                        </Button>
                     </DropdownTrigger>
-                    <DropdownMenu aria-label="Static Actions">
+                    <DropdownMenu aria-label="Static Actions" onAction={(key) => fetchSudokuByDifficulty(String(key))}>
                         <DropdownItem key="low">Simple</DropdownItem>
                         <DropdownItem key="medium">Medium</DropdownItem>
                         <DropdownItem key="high">Hard</DropdownItem>
