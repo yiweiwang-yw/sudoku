@@ -8,6 +8,7 @@ import {
     DropdownItem,
     Button,
 } from "@nextui-org/react";
+const { DynamoDBClient, ListTablesCommand } = require("@aws-sdk/client-dynamodb");
 
 interface SudokuData {
     id: number;
@@ -20,6 +21,21 @@ interface SudokuData {
 // const apiBaseUrl = "http://127.0.0.1:8000/api";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+const client = new DynamoDBClient({});
+
+//test the client, console.log the list of tables
+
+async function listTables() {
+    try {
+        const data = await client.send(new ListTablesCommand({}));
+        console.log("Tables:", data.TableNames.join("\n"));
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+listTables();
 
 export default function Home() {
     const [message, setMessage] = useState<string>("");
