@@ -22,7 +22,13 @@ interface SudokuData {
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-const client = new DynamoDBClient({});
+const client = new DynamoDBClient({
+    region : process.env.NEXT_PUBLIC_AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+    },
+});
 
 //test the client, console.log the list of tables
 
