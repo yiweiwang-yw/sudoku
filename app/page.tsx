@@ -49,7 +49,7 @@ export default function Home() {
     async function fetchRandomSudoku() {
         try {
             const response = await fetch(
-                `${apiBaseUrl}/api/python/get_randomsudoku`
+                `${apiBaseUrl}/python/get_randomsudoku`
             );
             const data: SudokuData = await response.json();
             setMessage("Puzzle loaded");
@@ -63,7 +63,7 @@ export default function Home() {
     async function fetchSudokuByDifficulty(difficulty: any) {
         try {
             const response = await fetch(
-                `${apiBaseUrl}/api/python/sudoku/difficulty/${difficulty}`
+                `${apiBaseUrl}/python/sudoku/difficulty/${difficulty}`
             );
             const data: SudokuData = await response.json();
             setMessage(`Puzzle loaded with difficulty: ${difficulty}`);
