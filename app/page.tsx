@@ -20,7 +20,7 @@ interface SudokuData {
 
 // const apiBaseUrl = "http://127.0.0.1:8000/api";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_VERCEL_URL;
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const client = new DynamoDBClient({
     region : process.env.NEXT_PUBLIC_AWS_REGION,
