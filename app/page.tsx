@@ -49,7 +49,7 @@ export default function Home() {
     async function fetchRandomSudoku() {
         try {
             const response = await fetch(
-                `${apiBaseUrl}/python/get_randomsudoku`
+                `${apiBaseUrl}/api/python/get_randomsudoku`
             );
             const data: SudokuData = await response.json();
             setMessage("Puzzle loaded");
