@@ -39,3 +39,4 @@ myenv
 /api/__pycache__
 *.csv
 __pycache__
+sudoku_full.json
