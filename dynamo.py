@@ -2,6 +2,7 @@ import boto3
 import json
 import os
 import uuid
+import time
 
 
 def create_sudoku_table():
@@ -45,13 +46,13 @@ def create_sudoku_table():
                 },
                 'ProvisionedThroughput': {
                     'ReadCapacityUnits': 5,
-                    'WriteCapacityUnits': 5
+                    'WriteCapacityUnits': 25
                 }
             }
         ],
         ProvisionedThroughput={
             'ReadCapacityUnits': 5,
-            'WriteCapacityUnits': 5
+            'WriteCapacityUnits': 25
         }
     )
 
@@ -64,25 +65,46 @@ def create_sudoku_table():
 
 
 
-def load_data_into_dynamodb(table):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    json_file_path = os.path.join(current_dir, 'api', 'data', 'sudoku_full.json')
+def load_data_into_dynamodb(table,json_file_path):
     with open(json_file_path, 'r') as f:
+        load_document_start_time = time.time()
         print('Loading data...')
         sudoku_data = json.load(f)
+        load_document_end_time = time.time()
+        print(f'Time taken to load document: {load_document_end_time - load_document_start_time} seconds')
         # store first 10 sudoku puzzles in DynamoDB
         print('Storing data...')
-        for i in range(10):
-            item = sudoku_data[i]
-            item['puzzle_id'] = str(uuid.uuid4())
-            table.put_item(Item=item)
+        number_of_puzzles = len(sudoku_data)
+        count = 0
+        start_time = time.time()
+        with table.batch_writer() as batch:
+            for i in range(number_of_puzzles):
+                item = sudoku_data[i]
+                item['puzzle_id'] = str(uuid.uuid4())
+                batch.put_item(Item=item)
+                count += 1
+                print(f'Loaded {count}/{number_of_puzzles} puzzles')
         print('Data loaded successfully!')
-
-
+        end_time = time.time()
+        print(f'Time taken to load data: {end_time - start_time} seconds')
+        print(f'average time per puzzle: {(end_time - start_time) / number_of_puzzles} seconds')
+        
+def count_items_in_table(table):
+    response = table.scan()
+    items = response['Items']
+    count = 0
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        items.extend(response['Items'])
+    count = len(items)
+    return count
 
 if __name__ == '__main__':
     # create_sudoku_table()
     table = boto3.resource('dynamodb').Table('SudokuPuzzles')
-    load_data_into_dynamodb(table)
-    response = table.scan()
-    print(response['Items'])
+    # current_dir = os.path.dirname(os.path.abspath(__file__))
+    # json_file_path = os.path.join(current_dir, 'api', 'data', 'sudoku_30k.json')
+    # load_data_into_dynamodb(table, json_file_path)
+    # table.delete()
+    print(count_items_in_table(table))
+    

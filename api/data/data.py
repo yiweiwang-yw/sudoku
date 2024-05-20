@@ -6,7 +6,7 @@ import time
 
 class Difficulty(enum.Enum):
     low_difficulty = 1
-    medium_difficulty = 5
+    medium_difficulty = 4
     
 class title(enum.Enum):
     second_column = 'puzzle'
@@ -35,7 +35,7 @@ def format_data(data: list) -> dict:
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 csv_file_path = os.path.join(script_dir, 'sudoku-3m.csv')
-json_file_path = os.path.join(script_dir, 'sudoku_full.json')
+json_file_path = os.path.join(script_dir, 'sudoku_30k.json')
 
 low_difficulty_data = []
 medium_difficulty_data = []
@@ -65,8 +65,50 @@ def process_data(format_data, csv_file_path):
             print(f'Processed {counter} of {total_number_of_lines} lines')
     end_time = time.time()
     print(f'Processing data took {end_time - start_time} seconds')
+    
+def process_30k_data(format_data, csv_file_path):
+    start_time = time.time()
+    print('Processing data...')
+    total_number_of_lines = 30000
+    counter = 0
+    
+    low_difficulty_count, medium_difficulty_count, high_difficulty_count = 0, 0, 0
+    
+    with open(csv_file_path, 'r') as f:
+        next(f)  # Skip the header line
+        for line in f: 
+            line = line.strip()
+            if not line:
+                break
+            
+            data = line.split(',')
+            formatted_data = format_data(data)
+            
+            if formatted_data['difficulty'] == 'low' and low_difficulty_count < 10000:
+                low_difficulty_data.append(formatted_data)
+                low_difficulty_count += 1
+                counter += 1
+            elif formatted_data['difficulty'] == 'medium' and medium_difficulty_count < 10000:
+                medium_difficulty_data.append(formatted_data)
+                medium_difficulty_count += 1
+                counter += 1
+            elif formatted_data['difficulty'] == 'high' and high_difficulty_count < 10000:
+                high_difficulty_data.append(formatted_data)
+                high_difficulty_count += 1
+                counter += 1
 
-process_data(format_data, csv_file_path)
+            if low_difficulty_count >= 10000 and medium_difficulty_count >= 10000 and high_difficulty_count >= 10000:
+                break
+            
+            print(f'Processed {counter} of {total_number_of_lines} lines')
+    
+    end_time = time.time()
+    print(f'Processing data took {end_time - start_time} seconds')
+    print(f'Low difficulty puzzles: {low_difficulty_count}')
+    print(f'Medium difficulty puzzles: {medium_difficulty_count}')
+    print(f'High difficulty puzzles: {high_difficulty_count}')
+
+process_30k_data(format_data, csv_file_path)
 
 def write_all_data_to_json(json_file_path):
     all_data = low_difficulty_data + medium_difficulty_data + high_difficulty_data
@@ -76,5 +118,21 @@ def write_all_data_to_json(json_file_path):
 write_all_data_to_json(json_file_path)
 
 
-
+# def validate_30k_json(json_file_path):
+#     with open(json_file_path, 'r') as f:
+#         low_difficulty_count, medium_difficulty_count, high_difficulty_count = 0, 0, 0
+#         data = json.load(f)
+#         print(f'Total number of puzzles: {len(data)}')
+#         for puzzle in data:
+#             if puzzle['difficulty'] == 'low':
+#                 low_difficulty_count += 1
+#             elif puzzle['difficulty'] == 'medium':
+#                 medium_difficulty_count += 1
+#             else:
+#                 high_difficulty_count += 1
+#         print(f'Low difficulty puzzles: {low_difficulty_count}')
+#         print(f'Medium difficulty puzzles: {medium_difficulty_count}')
+#         print(f'High difficulty puzzles: {high_difficulty_count}')
+        
+# validate_30k_json(json_file_path)
 
