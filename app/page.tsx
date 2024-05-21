@@ -22,25 +22,6 @@ interface SudokuData {
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-const client = new DynamoDBClient({
-    region : process.env.NEXT_PUBLIC_AWS_REGION,
-    credentials: {
-        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-    },
-});
-
-
-async function listTables() {
-    try {
-        const data = await client.send(new ListTablesCommand({}));
-        console.log("Tables:", data.TableNames.join("\n"));
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-listTables();
 
 export default function Home() {
     const [message, setMessage] = useState<string>("");

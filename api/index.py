@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .data.sudoku_solver import get_random_sudoku, get_sudoku
+from .data.db_operations import get_random_sudoku, get_sudoku
 
 app = FastAPI()
 
