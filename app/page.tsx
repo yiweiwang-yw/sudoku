@@ -8,14 +8,9 @@ import {
     DropdownItem,
     Button,
 } from "@nextui-org/react";
-
-interface SudokuData {
-    id: number;
-    puzzle: string[][];
-    solution: string[][];
-    clues: number;
-    difficulty: string;
-}
+import { SudokuData } from "./types/index";
+import { validateSudoku } from "./components/validateSudoku";
+import { defaultPuzzle } from "./components/defaultData";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -80,28 +75,37 @@ export default function Home() {
     }
 
     useEffect(() => {
-        setPuzzleData(initializeEmptyBoard());
+        const initialPuzzleData = initializeEmptyBoard();
+        setPuzzleData(initialPuzzleData);
+        setUserInputs(initialPuzzleData.puzzle);
+        setMessage("Puzzle loaded");
     }, []);
-
+    
     const initializeEmptyBoard = () => {
+        const randomDefaultPuzzle = defaultPuzzle[Math.floor(Math.random() * defaultPuzzle.length)];
+        return {
+            id: randomDefaultPuzzle.id,
+            puzzle: randomDefaultPuzzle.puzzle,
+            solution: randomDefaultPuzzle.solution,
+            clues: randomDefaultPuzzle.clues,
+            difficulty: randomDefaultPuzzle.difficulty,
+        };
+    };
+
+    const clearSudokuBoard = () => {
         const emptyBoard = Array.from({ length: 9 }, () => Array(9).fill("."));
         setUserInputs(emptyBoard);
         setEditedCells(new Set());
         setInitialCells(new Set());
-        setMessage("Board initialized");
-        return {
+        setConflicts(new Set());
+        setPuzzleData({
             id: 0,
             puzzle: emptyBoard,
             solution: emptyBoard,
             clues: 0,
             difficulty: "none",
-        };
-    };
-
-    const clearSudokuBoard = () => {
-        setPuzzleData(initializeEmptyBoard());
+        });
         setMessage("Board cleared");
-        setConflicts(new Set());
     };
 
     const handleInputChange = (
@@ -125,80 +129,18 @@ export default function Home() {
             setUserInputs(updatedInputs);
             setEditedCells(updatedEditedCells);
 
-            validateSudoku(updatedInputs);
-        }
-    };
+            const { newConflicts, conflictingCells } = validateSudoku(
+                updatedInputs,
+                puzzleData
+            );
+            setConflicts(newConflicts);
+            setEditedCells(conflictingCells);
 
-    const validateSudoku = (inputs: string[][]) => {
-        if (!puzzleData) {
-            return;
-        }
-
-        const newConflicts = new Set<string>();
-        const conflictingCells = new Set<string>();
-
-        // Check rows and columns
-        for (let i = 0; i < 9; i++) {
-            const rowSet = new Set<string>();
-            const colSet = new Set<string>();
-            for (let j = 0; j < 9; j++) {
-                // Check row conflicts
-                if (inputs[i][j] !== "." && rowSet.has(inputs[i][j])) {
-                    conflictingCells.add(`${i}-${j}`);
-                    for (let k = 0; k < 9; k++) {
-                        newConflicts.add(`${i}-${k}`); // Add entire row to conflicts
-                    }
-                } else {
-                    rowSet.add(inputs[i][j]);
-                }
-
-                // Check column conflicts
-                if (inputs[j][i] !== "." && colSet.has(inputs[j][i])) {
-                    conflictingCells.add(`${j}-${i}`);
-                    for (let k = 0; k < 9; k++) {
-                        newConflicts.add(`${k}-${i}`); // Add entire column to conflicts
-                    }
-                } else {
-                    colSet.add(inputs[j][i]);
-                }
+            if (newConflicts.size === 0) {
+                setMessage("No conflicts found.");
+            } else {
+                setMessage("Conflicts detected.");
             }
-        }
-
-        // Check 3x3 grids
-        for (let blockRow = 0; blockRow < 3; blockRow++) {
-            for (let blockCol = 0; blockCol < 3; blockCol++) {
-                const squareSet = new Set<string>();
-                for (let i = 0; i < 3; i++) {
-                    for (let j = 0; j < 3; j++) {
-                        const rowIndex = blockRow * 3 + i;
-                        const colIndex = blockCol * 3 + j;
-                        if (
-                            inputs[rowIndex][colIndex] !== "." &&
-                            squareSet.has(inputs[rowIndex][colIndex])
-                        ) {
-                            conflictingCells.add(`${rowIndex}-${colIndex}`);
-                            for (let k = 0; k < 3; k++) {
-                                for (let l = 0; l < 3; l++) {
-                                    const r = blockRow * 3 + k;
-                                    const c = blockCol * 3 + l;
-                                    newConflicts.add(`${r}-${c}`); // Add entire block to conflicts
-                                }
-                            }
-                        } else {
-                            squareSet.add(inputs[rowIndex][colIndex]);
-                        }
-                    }
-                }
-            }
-        }
-
-        setConflicts(newConflicts);
-        setEditedCells(conflictingCells);
-
-        if (newConflicts.size === 0) {
-            setMessage("No conflicts found.");
-        } else {
-            setMessage("Conflicts detected.");
         }
     };
 
