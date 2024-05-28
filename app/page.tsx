@@ -7,6 +7,7 @@ import {
     DropdownMenu,
     DropdownItem,
     Button,
+    user,
 } from "@nextui-org/react";
 import { SudokuData } from "./types/index";
 import { validateSudoku } from "./components/validateSudoku";
@@ -74,15 +75,53 @@ export default function Home() {
         }
     }
 
+    async function solveNextStep(puzzle: string[][]) {
+        try {
+            const response = await fetch(
+                `${apiBaseUrl}/python/solve_next_step`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ puzzle }),
+                }
+            );
+            console.log(JSON.stringify({ puzzle }));
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setMessage("Puzzle step solved");
+            setPuzzleData(data);
+            setUserInputs(data.puzzle.map((row) => row.slice()));
+
+            // Track initial cells
+            const initial = new Set<string>();
+            data.puzzle.forEach((row, rowIndex) => {
+                row.forEach((cell, colIndex) => {
+                    if (cell !== ".") {
+                        initial.add(`${rowIndex}-${colIndex}`);
+                    }
+                });
+            });
+            setInitialCells(initial);
+        } catch (error) {
+            console.error("error", error);
+            setMessage("Failed to solve puzzle step");
+        }
+    }
+
     useEffect(() => {
         const initialPuzzleData = initializeEmptyBoard();
         setPuzzleData(initialPuzzleData);
         setUserInputs(initialPuzzleData.puzzle);
         setMessage("Puzzle loaded");
     }, []);
-    
+
     const initializeEmptyBoard = () => {
-        const randomDefaultPuzzle = defaultPuzzle[Math.floor(Math.random() * defaultPuzzle.length)];
+        const randomDefaultPuzzle =
+            defaultPuzzle[Math.floor(Math.random() * defaultPuzzle.length)];
         return {
             id: randomDefaultPuzzle.id,
             puzzle: randomDefaultPuzzle.puzzle,
@@ -141,6 +180,15 @@ export default function Home() {
             } else {
                 setMessage("Conflicts detected.");
             }
+        }
+    };
+
+    const solveSudoku = () => {
+        if (puzzleData) {
+            setUserInputs(puzzleData.solution);
+            setEditedCells(new Set());
+            setConflicts(new Set());
+            setMessage("Sudoku solved.");
         }
     };
 
@@ -210,7 +258,7 @@ export default function Home() {
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-24">
-            <h1 className="text-2xl font-bold mb-6">Home Page</h1>
+            <h1 className="text-2xl font-bold mb-6">Sudoku</h1>
             <p className="mb-6">{message || "Loading..."}</p>
             <div className="mb-6">
                 <Button color="primary" onClick={fetchRandomSudoku}>
@@ -234,6 +282,19 @@ export default function Home() {
                         <DropdownItem key="high">High</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
+            </div>
+            <div className="mb-6">
+                <Button color="primary" onClick={solveSudoku}>
+                    Solve
+                </Button>
+                <Button
+                    color="primary"
+                    onClick={(
+                        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                    ) => solveNextStep(userInputs)}
+                >
+                    Solve Next
+                </Button>
             </div>
             <div>{renderSudokuBoard()}</div>
         </main>
