@@ -36,7 +36,7 @@ def validate_sudoku(puzzle: list) -> bool:
 
 
 def is_valid(arr: List[List[str]], row: int, col: int, num: str) -> bool:
-       for x in range(9):
+        for x in range(9):
             if arr[row][x] == num or arr[x][col] == num:
                 return False
         start_row, start_col = 3 * (row // 3), 3 * (col // 3)

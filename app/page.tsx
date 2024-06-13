@@ -49,20 +49,18 @@ export default function Home() {
         }
     }
 
-    async function fetchSudokuByDifficulty(difficulty: any) {
+    async function fetchSudokuByDifficulty(difficulty: string) {
         try {
-            const response = await fetch(
-                `${apiBaseUrl}/python/sudoku/difficulty/${difficulty}`
-            );
+            const response = await fetch(`${apiBaseUrl}/python/sudoku/difficulty/${difficulty}`);
             const data: SudokuData = await response.json();
             setMessage(`Puzzle loaded with difficulty: ${difficulty}`);
             setPuzzleData(data);
-            setUserInputs(data.puzzle.map((row) => row.slice()));
-
+            setUserInputs(data.puzzle.map((row: string[]) => row.slice()));
+    
             // Track initial cells
             const initial = new Set<string>();
-            data.puzzle.forEach((row, rowIndex) => {
-                row.forEach((cell, colIndex) => {
+            data.puzzle.forEach((row: string[], rowIndex: number) => {
+                row.forEach((cell: string, colIndex: number) => {
                     if (cell !== ".") {
                         initial.add(`${rowIndex}-${colIndex}`);
                     }
@@ -94,12 +92,12 @@ export default function Home() {
             const data = await response.json();
             setMessage("Puzzle step solved");
             setPuzzleData(data);
-            setUserInputs(data.puzzle.map((row) => row.slice()));
+            setUserInputs(data.puzzle.map((row: string[]) => row.slice()));
 
             // Track initial cells
             const initial = new Set<string>();
-            data.puzzle.forEach((row, rowIndex) => {
-                row.forEach((cell, colIndex) => {
+            data.puzzle.forEach((row: string[], rowIndex: number) => {
+                row.forEach((cell: string, colIndex: number) => {
                     if (cell !== ".") {
                         initial.add(`${rowIndex}-${colIndex}`);
                     }
