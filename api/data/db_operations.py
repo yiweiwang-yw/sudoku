@@ -1,38 +1,23 @@
 import boto3
 from boto3.dynamodb.conditions import Key
-import uuid
 import logging
+import os
+import random
+import uuid
 
 logger = logging.getLogger(__name__)
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('SudokuPuzzles')
+def _get_table():
+    table_name = os.getenv("SUDOKU_TABLE_NAME", "SudokuPuzzles")
+    return boto3.resource("dynamodb").Table(table_name)
 
 
 def get_random_sudoku() -> list:
-    try:
-        random_uuid = str(uuid.uuid4())
-        
-        last_key_evaluated = {
-            'puzzle_id': random_uuid
-        }
-
-        response = table.scan(
-            ExclusiveStartKey=last_key_evaluated,
-            Limit=1
-        )
-        items = response.get('Items', [])
-        
-        if items:
-            return items[0]
-        else:
-            return {"message": "No sudoku found"}
-    except Exception as e:
-        logger.error(f"Error in get_random_sudoku: {e}")
-        raise
+    return get_sudoku(random.choice(["low", "medium", "high"]))
     
 def get_sudoku(difficulty: str):
     try:
+        table = _get_table()
         random_uuid = str(uuid.uuid4())
         
         response = table.query(
@@ -41,11 +26,16 @@ def get_sudoku(difficulty: str):
             Limit=1
         )
         items = response.get('Items', [])
-        
-        if items:
-            return items[0]
-        else:
-            return {"message": "No sudoku found"}
+
+        if not items:
+            response = table.query(
+                IndexName='difficulty-index',
+                KeyConditionExpression=Key('difficulty').eq(difficulty),
+                Limit=1
+            )
+            items = response.get('Items', [])
+
+        return items[0] if items else {"message": "No sudoku found"}
     
     except Exception as e:
         logger.error(f"Error in get_sudoku: {e}")
