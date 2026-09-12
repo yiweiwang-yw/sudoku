@@ -6,6 +6,7 @@ import random
 import uuid
 
 logger = logging.getLogger(__name__)
+DIFFICULTIES = ("low", "medium", "high")
 
 def _get_table():
     table_name = os.getenv("SUDOKU_TABLE_NAME", "SudokuPuzzles")
@@ -13,13 +14,14 @@ def _get_table():
 
 
 def get_random_sudoku() -> list:
-    return get_sudoku(random.choice(["low", "medium", "high"]))
+    return get_sudoku(random.choice(DIFFICULTIES))
     
 def get_sudoku(difficulty: str):
     try:
         table = _get_table()
         random_uuid = str(uuid.uuid4())
         
+        # Start at a random UUID in the sorted index and wrap to its beginning.
         response = table.query(
             IndexName='difficulty-index',
             KeyConditionExpression=Key('difficulty').eq(difficulty) & Key('puzzle_id').gt(random_uuid),

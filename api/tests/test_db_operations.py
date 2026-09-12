@@ -26,7 +26,7 @@ class DynamoDbOperationsTests(unittest.TestCase):
 
         result = db_operations.get_random_sudoku()
 
-        choice.assert_called_once_with(["low", "medium", "high"])
+        choice.assert_called_once_with(db_operations.DIFFICULTIES)
         get_sudoku.assert_called_once_with("low")
         self.assertEqual({"puzzle_id": "puzzle"}, result)
 

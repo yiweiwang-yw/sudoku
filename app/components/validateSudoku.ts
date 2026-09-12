@@ -3,12 +3,9 @@ import { SudokuData } from "../types/index";
 export const validateSudoku = (
     inputs: string[][],
     puzzleData: SudokuData | null
-): { newConflicts: Set<string>; conflictingCells: Set<string> } => {
+): { newConflicts: Set<string> } => {
     if (!puzzleData) {
-        return {
-            newConflicts: new Set<string>(),
-            conflictingCells: new Set<string>(),
-        };
+        return { newConflicts: new Set<string>() };
     }
 
     const newConflicts = new Set<string>();
@@ -58,5 +55,5 @@ export const validateSudoku = (
         }
     }
 
-    return { newConflicts, conflictingCells: new Set(newConflicts) };
+    return { newConflicts };
 };

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 from pydantic import BaseModel
 from typing import List
-from .data.db_operations import get_random_sudoku, get_sudoku
+from .data.db_operations import DIFFICULTIES, get_random_sudoku, get_sudoku
 from .data.sudoku_solver import (
     InvalidPuzzleError,
     UnsolvablePuzzleError,
@@ -59,7 +59,7 @@ async def get_random_sudoku_resolver():
 
 @app.get("/api/python/sudoku/difficulty/{difficulty}")
 async def get_sudoku_by_difficulty_resolver(difficulty: str):
-    if difficulty not in {"low", "medium", "high"}:
+    if difficulty not in DIFFICULTIES:
         raise HTTPException(status_code=400, detail="Difficulty must be low, medium, or high.")
     try:
         result = get_sudoku(difficulty)
