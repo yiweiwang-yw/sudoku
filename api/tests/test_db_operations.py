@@ -10,6 +10,15 @@ class DynamoDbOperationsTests(unittest.TestCase):
             db_operations.get_sudoku("impossible")
 
     @patch("api.data.db_operations._get_table")
+    def test_reports_when_difficulty_has_no_puzzles(self, get_table):
+        get_table.return_value.query.return_value = {"Items": []}
+
+        with self.assertRaisesRegex(
+            db_operations.NoSudokuFoundError, "No sudoku found"
+        ):
+            db_operations.get_sudoku("high")
+
+    @patch("api.data.db_operations._get_table")
     def test_difficulty_query_wraps_when_random_range_is_empty(self, get_table):
         table = Mock()
         table.query.side_effect = [

@@ -141,7 +141,6 @@ export default function Home() {
             {
                 id: 0,
                 puzzle: emptyBoard,
-                solution: emptyBoard.map((row) => row.slice()),
                 clues: 0,
                 difficulty: "none",
             },
