@@ -30,7 +30,7 @@ const isBoard = (value: unknown): value is string[][] =>
             )
     );
 
-async function responseError(response: Response): Promise<string> {
+async function getErrorMessage(response: Response): Promise<string> {
     try {
         const body = await response.json();
         if (typeof body.detail === "string") {
@@ -72,40 +72,46 @@ export default function Home() {
         setMessage(loadedMessage);
     }, []);
 
-    const fetchPuzzle = async (path: string, loadedMessage: string) => {
+    const runRequest = async (
+        loadingMessage: string,
+        request: () => Promise<void>
+    ) => {
         setIsLoading(true);
-        setMessage("Loading puzzle...");
+        setMessage(loadingMessage);
         try {
-            const response = await fetch(`${apiBaseUrl}${path}`);
-            if (!response.ok) {
-                throw new Error(await responseError(response));
-            }
-            loadPuzzle(await response.json(), loadedMessage);
+            await request();
         } catch (error) {
             setMessage(
-                error instanceof Error ? error.message : "Failed to load puzzle."
+                error instanceof Error ? error.message : "Request failed."
             );
         } finally {
             setIsLoading(false);
         }
     };
 
-    const submitBoard = async (path: string, successMessage: string) => {
+    const fetchPuzzle = (path: string, loadedMessage: string) =>
+        runRequest("Loading puzzle...", async () => {
+            const response = await fetch(`${apiBaseUrl}${path}`);
+            if (!response.ok) {
+                throw new Error(await getErrorMessage(response));
+            }
+            loadPuzzle(await response.json(), loadedMessage);
+        });
+
+    const submitBoard = (path: string, successMessage: string) => {
         if (conflicts.size > 0) {
             setMessage("Resolve conflicting values before solving.");
             return;
         }
 
-        setIsLoading(true);
-        setMessage("Solving...");
-        try {
+        return runRequest("Solving...", async () => {
             const response = await fetch(`${apiBaseUrl}${path}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ puzzle: userInputs }),
             });
             if (!response.ok) {
-                throw new Error(await responseError(response));
+                throw new Error(await getErrorMessage(response));
             }
 
             const data: { puzzle?: unknown } = await response.json();
@@ -120,13 +126,7 @@ export default function Home() {
             );
             setConflicts(new Set());
             setMessage(successMessage);
-        } catch (error) {
-            setMessage(
-                error instanceof Error ? error.message : "Failed to solve puzzle."
-            );
-        } finally {
-            setIsLoading(false);
-        }
+        });
     };
 
     useEffect(() => {

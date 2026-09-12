@@ -17,6 +17,9 @@ def get_random_sudoku() -> list:
     return get_sudoku(random.choice(DIFFICULTIES))
     
 def get_sudoku(difficulty: str):
+    if difficulty not in DIFFICULTIES:
+        raise ValueError("Difficulty must be low, medium, or high.")
+
     try:
         table = _get_table()
         random_uuid = str(uuid.uuid4())

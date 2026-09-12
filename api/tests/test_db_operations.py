@@ -5,6 +5,10 @@ from api.data import db_operations
 
 
 class DynamoDbOperationsTests(unittest.TestCase):
+    def test_rejects_unsupported_difficulty(self):
+        with self.assertRaisesRegex(ValueError, "Difficulty must be"):
+            db_operations.get_sudoku("impossible")
+
     @patch("api.data.db_operations._get_table")
     def test_difficulty_query_wraps_when_random_range_is_empty(self, get_table):
         table = Mock()
