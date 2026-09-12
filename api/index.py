@@ -3,8 +3,18 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 from pydantic import BaseModel
 from typing import List
-from .data.db_operations import get_random_sudoku, get_sudoku
-from .data.sudoku_solver import solve_next_step
+from .data.db_operations import (
+    DIFFICULTIES,
+    NoSudokuFoundError,
+    get_random_sudoku,
+    get_sudoku,
+)
+from .data.sudoku_solver import (
+    InvalidPuzzleError,
+    UnsolvablePuzzleError,
+    solve_next_step,
+    solve_sudoku,
+)
 
 
 class PuzzleRequest(BaseModel):
@@ -37,33 +47,53 @@ def hello_world():
 @app.get("/api/python/get_randomsudoku")
 async def get_random_sudoku_resolver():
     try:
-        result = get_random_sudoku()
-        return result
+        return get_random_sudoku()
+    except NoSudokuFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error fetching random sudoku: {e}")
-        return {"error": str(e)}
+        raise HTTPException(
+            status_code=503,
+            detail="Puzzle storage is unavailable. Check the DynamoDB configuration.",
+        )
 # get a sudoku by difficulty
 
 
 @app.get("/api/python/sudoku/difficulty/{difficulty}")
 async def get_sudoku_by_difficulty_resolver(difficulty: str):
+    if difficulty not in DIFFICULTIES:
+        raise HTTPException(status_code=400, detail="Difficulty must be low, medium, or high.")
     try:
-        result = get_sudoku(difficulty)
-        return result
+        return get_sudoku(difficulty)
+    except NoSudokuFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(
             f"Error fetching sudoku with difficulty {difficulty}: {e}")
-        return {"error": str(e)}
+        raise HTTPException(
+            status_code=503,
+            detail="Puzzle storage is unavailable. Check the DynamoDB configuration.",
+        )
+
+
+def solve_or_raise(puzzle: List[List[str]], next_step: bool = False):
+    try:
+        return solve_next_step(puzzle) if next_step else solve_sudoku(puzzle)
+    except InvalidPuzzleError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except UnsolvablePuzzleError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
 
 
 @app.post("/api/python/solve_next_step")
 async def solve_next_step_resolver(puzzle_request: PuzzleRequest):
-    try:
-        print("Received puzzle_request:", puzzle_request)
-        puzzle = puzzle_request.puzzle
-        print("Puzzle:", puzzle)
-        result = solve_next_step(puzzle)
-        return {"puzzle": result}
-    except Exception as e:
-        logger.error(f"Error solving next step: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    return {"puzzle": solve_or_raise(puzzle_request.puzzle, next_step=True)}
+
+
+@app.post("/api/python/solve")
+async def solve_resolver(puzzle_request: PuzzleRequest):
+    return {"puzzle": solve_or_raise(puzzle_request.puzzle)}
